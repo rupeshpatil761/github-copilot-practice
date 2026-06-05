@@ -1,5 +1,6 @@
 package com.rupesh.copilot.clinicalsapi.controllers;
 
+import com.rupesh.copilot.clinicalsapi.exceptions.ResourceNotFoundException;
 import com.rupesh.copilot.clinicalsapi.models.Patient;
 import com.rupesh.copilot.clinicalsapi.repositories.PatientRepository;
 import org.junit.jupiter.api.BeforeEach;
@@ -81,9 +82,8 @@ class PatientControllerTest {
     void testGetPatientById_NotFound() {
         when(patientRepository.findById(anyLong())).thenReturn(Optional.empty());
 
-        ResponseEntity<Patient> response = patientController.getPatientById(999L);
+        assertThrows(ResourceNotFoundException.class, () -> patientController.getPatientById(999L));
 
-        assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
         verify(patientRepository, times(1)).findById(999L);
     }
 
@@ -137,10 +137,7 @@ class PatientControllerTest {
     @Test
     void testUpdatePatient_NotFound() {
         when(patientRepository.findById(anyLong())).thenReturn(Optional.empty());
-
-        ResponseEntity<Patient> response = patientController.updatePatient(999L, patient1);
-
-        assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
+        assertThrows(ResourceNotFoundException.class, () -> patientController.updatePatient(999L, patient1));
         verify(patientRepository, times(1)).findById(999L);
         verify(patientRepository, never()).save(any(Patient.class));
     }
@@ -160,10 +157,7 @@ class PatientControllerTest {
     @Test
     void testDeletePatient_NotFound() {
         when(patientRepository.existsById(anyLong())).thenReturn(false);
-
-        ResponseEntity<Void> response = patientController.deletePatient(999L);
-
-        assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
+        assertThrows(ResourceNotFoundException.class, () -> patientController.deletePatient(999L));
         verify(patientRepository, times(1)).existsById(999L);
         verify(patientRepository, never()).deleteById(anyLong());
     }

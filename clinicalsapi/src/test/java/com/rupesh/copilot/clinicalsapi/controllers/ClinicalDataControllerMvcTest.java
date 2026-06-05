@@ -1,5 +1,6 @@
 package com.rupesh.copilot.clinicalsapi.controllers;
 
+import com.rupesh.copilot.clinicalsapi.exceptions.GlobalExceptionHandler;
 import com.rupesh.copilot.clinicalsapi.models.ClinicalData;
 import com.rupesh.copilot.clinicalsapi.models.Patient;
 import com.rupesh.copilot.clinicalsapi.repositories.ClinicalDataRepository;
@@ -46,7 +47,9 @@ class ClinicalDataControllerMvcTest {
 
     @BeforeEach
     void setUp() {
-        mockMvc = MockMvcBuilders.standaloneSetup(clinicalDataController).build();
+        mockMvc = MockMvcBuilders.standaloneSetup(clinicalDataController)
+                .setControllerAdvice(new GlobalExceptionHandler())
+                .build();
 
         patient = new Patient();
         patient.setId(1L);

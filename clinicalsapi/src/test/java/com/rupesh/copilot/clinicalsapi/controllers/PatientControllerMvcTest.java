@@ -1,5 +1,6 @@
 package com.rupesh.copilot.clinicalsapi.controllers;
 
+import com.rupesh.copilot.clinicalsapi.exceptions.GlobalExceptionHandler;
 import com.rupesh.copilot.clinicalsapi.models.Patient;
 import com.rupesh.copilot.clinicalsapi.repositories.PatientRepository;
 import org.junit.jupiter.api.BeforeEach;
@@ -39,7 +40,9 @@ class PatientControllerMvcTest {
 
     @BeforeEach
     void setUp() {
-        mockMvc = MockMvcBuilders.standaloneSetup(patientController).build();
+        mockMvc = MockMvcBuilders.standaloneSetup(patientController)
+                .setControllerAdvice(new GlobalExceptionHandler())
+                .build();
 
         patient1 = new Patient();
         patient1.setId(1L);

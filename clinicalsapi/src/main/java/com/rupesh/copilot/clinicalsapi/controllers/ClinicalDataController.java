@@ -1,5 +1,6 @@
 package com.rupesh.copilot.clinicalsapi.controllers;
 
+import com.rupesh.copilot.clinicalsapi.exceptions.ResourceNotFoundException;
 import com.rupesh.copilot.clinicalsapi.models.ClinicalData;
 import com.rupesh.copilot.clinicalsapi.models.Patient;
 import com.rupesh.copilot.clinicalsapi.repositories.ClinicalDataRepository;
@@ -40,18 +41,17 @@ public class ClinicalDataController {
     // Read - GET by ID
     @GetMapping("/{id}")
     public ResponseEntity<ClinicalData> getClinicalDataById(@PathVariable Long id) {
-        Optional<ClinicalData> clinicalData = clinicalDataRepository.findById(id);
-        return clinicalData.map(data -> new ResponseEntity<>(data, HttpStatus.OK))
-                .orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
+        ClinicalData clinicalData = clinicalDataRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("ClinicalData", id));
+        return new ResponseEntity<>(clinicalData, HttpStatus.OK);
     }
 
     // Update - PUT
     @PutMapping("/{id}")
-    public ResponseEntity<ClinicalData> updateClinicalData(@PathVariable Long id, @RequestBody ClinicalData clinicalData) {
-        Optional<ClinicalData> existingClinicalData = clinicalDataRepository.findById(id);
-        if (existingClinicalData.isEmpty()) {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        }
+    public ResponseEntity<ClinicalData> updateClinicalData(@PathVariable Long id,
+               @RequestBody ClinicalData clinicalData) {
+        clinicalDataRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("ClinicalData", id));
         clinicalData.setId(id);
         ClinicalData updated = clinicalDataRepository.save(clinicalData);
         return new ResponseEntity<>(updated, HttpStatus.OK);
@@ -60,10 +60,8 @@ public class ClinicalDataController {
     // Delete - DELETE
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteClinicalData(@PathVariable Long id) {
-        Optional<ClinicalData> existingClinicalData = clinicalDataRepository.findById(id);
-        if (existingClinicalData.isEmpty()) {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        }
+        clinicalDataRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("ClinicalData", id));
         clinicalDataRepository.deleteById(id);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
@@ -72,17 +70,14 @@ public class ClinicalDataController {
     @PostMapping("/patient/{patientId}")
     public ResponseEntity<ClinicalData> createClinicalDataForPatient(@PathVariable Long patientId,
                      @RequestBody ClinicalData clinicalData) {
-        Optional<Patient> patient = patientRepository.findById(patientId);
-        if (patient.isEmpty()) {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        }
+        Patient patient = patientRepository.findById(patientId)
+                .orElseThrow(() -> new ResourceNotFoundException("Patient", patientId));
         ClinicalData newClinicalData = new ClinicalData();
-        newClinicalData.setPatient(patient.get());
+        newClinicalData.setPatient(patient);
         newClinicalData.setComponentName(clinicalData.getComponentName());
         newClinicalData.setComponentValue(clinicalData.getComponentValue());
         newClinicalData.setMeasuredDateTime(new Timestamp(System.currentTimeMillis()));
-        ClinicalData saved = clinicalDataRepository.save(newClinicalData);
-        return new ResponseEntity<>(saved, HttpStatus.CREATED);
+        return new ResponseEntity<>(clinicalDataRepository.save(newClinicalData), HttpStatus.CREATED);
     }
 }
 
