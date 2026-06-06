@@ -65,6 +65,7 @@ const Home = () => {
     return (
         <div className="patient-page">
             <div className="patient-card home-card">
+                <h1 className="home-page-title">Clinicals Dashboard</h1>
                 <h2 className="patient-title">Patient Details</h2>
 
                 {loading && <p className="form-message">Loading...</p>}
