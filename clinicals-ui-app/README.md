@@ -68,3 +68,13 @@ flowchart TD
 - `src/components/AddPatient.js` - patient creation form
 - `src/components/AddClinicals.js` - clinical data form
 - `src/App.css` - shared UI styles
+
+## UI Screenshots
+
+![Home Page](screenshots/home.png)
+![Add Patient](screenshots/add_patient.png)
+![Add Clinical Data](screenshots/add_clinicals.png)
+![View Clinical Data](screenshots/view_clinicals.png)
+![Delete Patient](screenshots/delete_patient_1.png)
+![Delete Patient Confirmation](screenshots/delete_patient_2.png)
+![Sample Prompt](screenshots/sample_prompt.png)
